@@ -30,13 +30,20 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
-    try {
-      const savedUser = localStorage.getItem('user');
-      return savedUser ? JSON.parse(savedUser) : null;
-    } catch {
+  try {
+    const savedUser = localStorage.getItem('user');
+    const savedToken = localStorage.getItem('token');
+
+    // User is authenticated only when both user and token exist
+    if (!savedUser || !savedToken) {
       return null;
     }
-  });
+
+    return JSON.parse(savedUser);
+  } catch {
+    return null;
+  }
+});
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState<boolean>(false);
 
